@@ -10,7 +10,7 @@ const token = Astro.cookies.get("token");
 const tokenValue = token && token.value ? token.value : null;
 // Verificar si el usuario es administrador
 let isAdmin = false;
-
+export const prerender = false;
 if (tokenValue) {
   try {
     const decodedToken = jwtDecode(tokenValue);
