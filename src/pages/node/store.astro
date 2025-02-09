@@ -1,0 +1,50 @@
+---
+// src/pages/node/store.astro
+import Layout from "../../layouts/Layout.astro";
+import ListStore from "../../components/store/ListStore.jsx";
+import HeaderDashboard from "../../components/HeaderDashboard.astro";
+
+// Obtener el token desde las cookies de Astro
+const token = Astro.cookies.get("token");
+const tokenValue = token && token.value ? token.value : null;
+const isTokenValid = !!tokenValue;
+
+// **Obtención de datos en el servidor (SSR):**
+// Puedes obtener productos y categorías aquí y pasarlos al componente ListStore.
+const productsResponse = await fetch(
+  "https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/products"
+);
+const productsData = await productsResponse.json();
+
+const categoriesResponse = await fetch(
+  "https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/categories"
+);
+const categoriesData = await categoriesResponse.json();
+
+// Pasar los datos obtenidos como props al componente
+const initialData = {
+  initialProducts: productsData,
+  initialCategories: categoriesData,
+  token: tokenValue,
+};
+
+console.log("Token recuperado desde las cookies:", tokenValue);
+---
+
+<Layout>
+  <main class="container mx-auto p-8">
+    <HeaderDashboard server:defer/>
+
+    <section>
+      <!-- Se pasan las propiedades iniciales al componente ListStore -->
+      <ListStore client:only="react" {...initialData} />
+    </section>
+  </main>
+</Layout>
+
+<style>
+  /* Estilos personalizados */
+  .text-valorant {
+    color: #10b981; /* Verde de referencia */
+  }
+</style>

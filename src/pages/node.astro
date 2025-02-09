@@ -1,0 +1,19 @@
+---
+import CardApis from "../components/CardApis.astro";
+import bannerNode from "../assets/node.jpg";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <div class="container mx-auto p-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <CardApis
+      href="/node/store"
+      imageSrc={bannerNode}
+      imageAlt="E-Commerce API with Node JS"
+      title="E-Commerce API with Node JS"
+      description="Explora la lista de productos con Node.js. MEAN Stack."
+    />
+    </div>
+  </div>
+</Layout>

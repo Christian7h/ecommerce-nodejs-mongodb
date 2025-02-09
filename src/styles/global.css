@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@theme {
+    --color-valorant: #ff4655;
+    --color-valorant-dark: #0f1923;
+    --color-valorant-light: #ece8e1;
+  }

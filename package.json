@@ -9,6 +9,22 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.2.5"
+    "@astrojs/netlify": "^6.1.0",
+    "@astrojs/react": "^4.2.0",
+    "@astrojs/vercel": "^8.0.6",
+    "@lucia-auth/adapter-drizzle": "^1.1.0",
+    "@nextui-org/react": "^2.6.11",
+    "@tailwindcss/vite": "^4.0.5",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "arctic": "^3.2.4",
+    "astro": "^5.2.5",
+    "bcryptjs": "^2.4.3",
+    "framer-motion": "^12.4.1",
+    "jwt-decode": "^4.0.0",
+    "oslo": "^1.2.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "transbank-sdk": "^5.0.0"
   }
 }

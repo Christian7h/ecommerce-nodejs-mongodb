@@ -1,10 +1,11 @@
 ---
 //src/layouts/Layout.astro
 import "../styles/global.css";
-
 import background from "../assets/background.svg";
 import bannerValo from "../assets/VALORANT_logo4.jpg";
 import Navbar from "../components/Navbar.astro";
+// Configuración de caché
+Astro.response.headers.set("Cache-Control", "public, max-age=600, s-maxage=3600, stale-while-revalidate=86400");
 ---
 
 <!doctype html>
@@ -56,24 +57,23 @@ import Navbar from "../components/Navbar.astro";
     <meta name="robots" content="index, follow" />
     <title>Cristian Villalobos - APIs de Valorant y ZZZ</title>
   </head>
-  <body class="text-valorant-light">
-  <div id="container" >
-    <!-- Fondo SVG -->
-
-    <!-- Fondo oscuro solo en el contenedor -->
-    <div class="fixed top-0 left-0 w-full h-full bg-valorant-dark z-10"></div>
-    
-    <!-- Contenido principal -->
-    <main class="relative z-20">
-      <img id="background" src={background.src} alt="Background Image" fetchpriority="high" />
-
-      <slot />
-    </main>
-  </div>
-
-  <Navbar />
-</body>
-
+  <body class="bg-valorant-dark text-valorant-light">
+    <div id="container" >
+      <!-- Fondo SVG -->
+  
+      <!-- Fondo oscuro solo en el contenedor -->
+      <div class="fixed top-0 left-0 w-full h-full bg-valorant-dark z-10"></div>
+      
+      <!-- Contenido principal -->
+      <main class="relative z-20">
+        <img id="background" src={background.src} alt="Background Image" fetchpriority="high" />
+  
+        <slot />
+      </main>
+    </div>
+  
+    <Navbar />
+  </body>
 </html>
 <style>
   /* ===== Scrollbar CSS ===== */
@@ -112,7 +112,7 @@ import Navbar from "../components/Navbar.astro";
       Arial, sans-serif;
       width: 100%;
       height: 100%;
-  }
+    }
 
   main {
     height: 100%;

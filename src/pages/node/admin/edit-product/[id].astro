@@ -1,0 +1,47 @@
+---
+
+// Función para generar rutas estáticas para cada producto
+export async function getStaticPaths() {
+  try {
+    const response = await fetch("https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/products");
+    if (!response.ok) {
+      throw new Error("Error al obtener productos");
+    }
+    const products = await response.json();
+    // Asegúrate de que cada producto tenga la propiedad _id (y conviértela a string si es necesario)
+    return products.map((product) => ({
+      params: { id: product._id.toString() },
+    }));
+  } catch (error) {
+    console.error("Error en getStaticPaths:", error);
+    // Retornamos un array vacío para evitar romper el build si falla la petición
+    return [];
+  }
+}
+
+import Layout from "../../../../layouts/Layout.astro";
+import UpdateProduct from "../../../../components/store/UpdateProduct";
+import {jwtDecode} from "jwt-decode";
+
+// Obtener el token de las cookies
+const token = Astro.cookies.get("token");
+const tokenValue = token && token.value ? token.value : null;
+
+// Verificar si el usuario es administrador (si es necesario)
+let isAdmin = false;
+if (tokenValue) {
+  try {
+    const decodedToken = jwtDecode(tokenValue);
+    isAdmin = decodedToken.isAdmin; // Asegúrate de que `isAdmin` está en tu token
+  } catch (error) {
+    console.error("Error al decodificar el token:", error);
+  }
+}
+
+const { id } = Astro.params;
+---
+
+<Layout>
+  <!-- Aquí ya se renderizará de forma estática el componente con la información precargada -->
+  <UpdateProduct id={id} token={tokenValue} client:only="react" />
+</Layout>

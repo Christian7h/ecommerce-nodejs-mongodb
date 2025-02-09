@@ -1,11 +1,55 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import CardApis from "../components/CardApis.astro";
+import bannerNode from "../assets/node.jpg";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const user = Astro.locals.user;
+
+// Desestructurando el contexto de Netlify desde Astro.locals (con validación por si no existe)
+const netlifyContext = Astro.locals.netlify?.context || { geo: {} };
+const { geo: { city, country } = {} } = netlifyContext;
+
+const cityName = city || "Ciudad desconocida";
+const countryName = country?.name || "País desconocido";
+const countryCode = country?.code || "";
 ---
 
 <Layout>
-	<Welcome />
+  <main class="container mx-auto p-8">
+    <header class="mb-12">
+      <h1 class="text-4xl font-bold text-valorant mb-4">
+        ¡Bienvenido {user ? user.username : "visitante"} de {cityName}, {countryName}!
+      </h1>
+      {countryCode && (
+        <img
+          src={`https://flagcdn.com/56x42/${countryCode.toLowerCase()}.png`}
+          alt={`Bandera de ${countryName}`}
+          style="height:2em;"
+          class="inline-block ml-2"
+        />
+      )}
+    </header>
+
+    <section class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Enlace a la API Node -->
+      <CardApis
+        href="/node"
+        imageSrc={bannerNode}
+        imageAlt="Api Node"
+        title="API MongoDB, Express, Astro, NodeJS"
+        description="Explora el contenido de la API conectada a MEAN CRUD"
+      />
+
+      <!-- Agrega más componentes CardApis según sea necesario -->
+    </section>
+  </main>
 </Layout>
+
+<style>
+  /* Ejemplo de variables de color y estilos consistentes */
+  .text-valorant {
+    color: #10B981; /* Verde, ajustable según tu guía de estilos */
+  }
+
+  /* Puedes incluir más estilos globales o específicos aquí */
+</style>

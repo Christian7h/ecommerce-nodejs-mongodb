@@ -1,0 +1,48 @@
+---
+// Obtener el token desde las cookies de Astro
+
+const token = Astro.cookies.get("token");
+const tokenValue = token && token.value ? token.value : null;
+const isTokenValid = !!tokenValue;
+console.log("Token recuperado desde las cookies:", tokenValue);
+---
+<header class="mb-8">
+    <h1 class="text-4xl font-bold text-valorant">Ecommerce</h1>
+    <nav class="flex justify-end space-x-4 mt-4">
+      {
+        isTokenValid ? (
+          <>
+            <a
+              href="/node/admin/dashboard"
+              class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
+            >
+              Administrar Productos
+            </a>
+            <a
+              href="/logout"
+              class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-200"
+              data-astro-prefetch="tap"
+            >
+              Cerrar Sesión
+            </a>
+          </>
+        ) : (
+          <>
+            <a
+              href="/node/register"
+              class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200"
+            >
+              Registrarse
+            </a>
+            <a
+              href="/node/login"
+              class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition duration-200"
+            >
+              Iniciar Sesión
+            </a>
+          </>
+        )
+      }
+      
+    </nav>
+  </header>

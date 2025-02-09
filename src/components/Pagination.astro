@@ -1,0 +1,47 @@
+---
+interface Props {
+    totalPages: number;
+}
+
+const { totalPages } = Astro.props;
+
+// Obtener la página actual desde los parámetros de búsqueda (query string)
+const url = new URL(Astro.url.pathname + Astro.url.search, Astro.url.origin);
+const pageParam = Number(url.searchParams.get('page') ?? 1);
+
+const currentPage = Math.max(
+    pageParam > totalPages ? totalPages : pageParam,
+    1
+);
+
+const path = url.pathname;
+---
+
+<div class="flex justify-between my-24 items-center">
+    <!-- Botón para la página anterior -->
+    <a
+        href={`${path}?page=${Math.max(currentPage - 1, 1)}`}
+        class="bg-[#0f1923] hover:bg-[#ff4655] text-[#d5d6c3] hover:text-white font-bold py-1 px-3 border border-[#d5d6c3] transition duration-200 ease-in-out rounded-lg"
+    >
+        Anteriores
+    </a>
+
+    <!-- Indicador de página actual -->
+    <span class="text-[#ff4655] text-xl font-bold">
+        Página {currentPage} de {totalPages}
+    </span>
+
+    <!-- Botón para la página siguiente -->
+    <a
+        href={`${path}?page=${Math.min(currentPage + 1, totalPages)}`}
+        class="bg-[#0f1923] hover:bg-[#ff4655] text-[#d5d6c3] hover:text-white font-bold py-1 px-3 border border-[#d5d6c3] transition duration-200 ease-in-out rounded-lg"
+    >
+        Siguiente
+    </a>
+</div>
+
+<!-- <style>
+    .button {
+        @apply p-2 bg-purple-700 text-white rounded;
+    }
+</style> -->
