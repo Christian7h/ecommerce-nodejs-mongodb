@@ -4,7 +4,7 @@ import AsideStore from "../../../components/store/AsideStore.astro";
 import CategoryList from "../../../components/store/CategoryList";
 import Layout from "../../../layouts/Layout.astro";
 import { jwtDecode } from "jwt-decode";
-export const prerender = false;
+export const prerender = true;
 
 const token = Astro.cookies.get("token");
 const tokenValue = token && token.value ? token.value : null;
@@ -28,7 +28,7 @@ if (tokenValue) {
       <!-- Formulario para agregar o editar categorías -->
       <AsideStore/>
       <section class="flex p-4">
-        <AddCategory client:only="react" token={tokenValue} />
+        <AddCategory client:load token={tokenValue} />
       </section>
       <!-- Lista de categorías -->
       <section class="flex-1 p-4">
