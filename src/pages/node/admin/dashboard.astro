@@ -8,7 +8,6 @@ import AsideStore from "../../../components/store/AsideStore.astro";
 import ManageProduct from "../../../components/ManageProduct";
 const token = Astro.cookies.get("token");
 const tokenValue = token && token.value ? token.value : null;
-
 // Verificar si el usuario es administrador
 let isAdmin = false;
 
