@@ -5,10 +5,10 @@ const error = Astro.url.searchParams.get("error");
 ---
 
 <Layout title="Registrarse">
-  <section class="bg-valorant-dark min-h-screen flex flex-col items-center justify-center">
+  <section class="min-h-screen flex flex-col items-center justify-center">
     <div class="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-md">
       <div class="flex flex-col items-center">
-        <img class="w-24 mb-4" src={bannerValo.src} alt="Valorant Logo" />
+        <!-- <img class="w-24 mb-4" src={bannerValo.src} alt="Valorant Logo" /> -->
         <h1 class="text-2xl font-bold text-white">Crea tu cuenta</h1>
       </div>
       {error && <p class="text-red-500 text-center">{error}</p>}

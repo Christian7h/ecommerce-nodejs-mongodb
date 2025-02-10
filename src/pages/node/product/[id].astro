@@ -5,9 +5,13 @@ import ProductDetail from "../../../components/store/ProductDetail.jsx";
 // Generar rutas estáticas: se obtiene la lista de productos para crear una página por cada uno
 export async function getStaticPaths() {
   try {
-    const response = await fetch("https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/products");
+    const response = await fetch(
+      "https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/products"
+    );
     if (!response.ok) {
-      throw new Error("Error al obtener productos para generar rutas estáticas");
+      throw new Error(
+        "Error al obtener productos para generar rutas estáticas"
+      );
     }
     const products = await response.json();
     return products.map((product) => ({
@@ -24,7 +28,9 @@ export async function getStaticPaths() {
 const { id } = Astro.params;
 
 // Realizar la petición para obtener el detalle del producto en el servidor
-const productResponse = await fetch(`https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/products/${id}`);
+const productResponse = await fetch(
+  `https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/products/${id}`
+);
 if (!productResponse.ok) {
   throw new Error("Error al obtener el producto");
 }
@@ -32,11 +38,9 @@ const productData = await productResponse.json();
 ---
 
 <Layout>
-  <div class="container mx-auto p-8 bg-valorant-dark text-valorant-light min-h-screen">
-    <h1 class="text-4xl font-bold text-valorant mb-8">Detalle del Producto</h1>
-    <!-- Se pasa el objeto del producto como prop al componente -->
-    <ProductDetail product={productData} />
-  </div>
+  <h1 class="text-4xl font-bold text-valorant mb-8">Detalle del Producto</h1>
+  <!-- Se pasa el objeto del producto como prop al componente -->
+  <ProductDetail product={productData} />
 </Layout>
 
 <style>

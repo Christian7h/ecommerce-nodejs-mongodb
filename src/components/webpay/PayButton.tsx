@@ -53,11 +53,11 @@ const PayButton: React.FC<PayButtonProps> = ({ amount, productId }) => {
       >
         Pagar con WEBPAY
       </button>
-      <img
+      {/* <img
         src={webpayLogo} // Reemplaza con la ruta correcta a la imagen del logo de Webpay
         alt="Webpay Logo"
         className="w-full h-auto max-w-xs mx-auto"
-      />
+      /> */}
     </div>
   );
 };

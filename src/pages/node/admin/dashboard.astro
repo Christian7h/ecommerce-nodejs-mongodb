@@ -1,41 +1,72 @@
 ---
-import AddProduct from "../../../components/store/AddProduct";
 import Layout from "../../../layouts/Layout.astro";
 import { jwtDecode } from "jwt-decode";
 import Navbar from "../../../components/Navbar.astro";
-import ProductsList from "../../../components/store/ProductsList";
-import AsideStore from "../../../components/store/AsideStore.astro";
 import ManageProduct from "../../../components/ManageProduct";
+import AddCategory from "../../../components/store/AddCategory";
+
 const token = Astro.cookies.get("token");
 const tokenValue = token && token.value ? token.value : null;
-// Verificar si el usuario es administrador
 let isAdmin = false;
 export const prerender = false;
+
 if (tokenValue) {
   try {
     const decodedToken = jwtDecode(tokenValue);
-    isAdmin = decodedToken.isAdmin; // Asegúrate de que `isAdmin` está en tu token
+    isAdmin = decodedToken.isAdmin;
   } catch (error) {
     console.error("Error al decodificar el token:", error);
   }
 }
+// Obtener parámetro de tab de la URL
+const url = new URL(Astro.request.url);
+const activeTab = url.searchParams.get('tab') || 'products';
 ---
+
 <Layout>
   {isAdmin ? (
-      <div class="bg-valorant-dark text-valorant-light">
-      <div id="container" class="flex">
-        <!-- Menú Lateral -->
-       <AsideStore />
-        <!-- Contenido Principal -->
-        <main class="w-full lg:ml-1/6 p-6 space-y-12">  
-          
-            <ManageProduct client:only="react" token={tokenValue} />
+    <div class="min-h-screen bg-valorant-dark text-valorant-light">
+      <div class="flex flex-col lg:flex-row">
+        <main class="flex-1 p-6 lg:p-8">
+          <div class="max-w-7xl mx-auto space-y-8">
+             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+              <h1 class="text-3xl font-bold">Panel de Administración</h1>
+               <nav class="w-full lg:w-auto bg-valorant-card rounded-lg p-1">
+                   <div class="flex flex-col xs:flex-row gap-2">                
+                <a
+                  href="?tab=products"
+                  class={`px-6 py-2 rounded-md transition-colors text-center ${
+                    activeTab === 'products' 
+                      ? 'bg-valorant-accent text-white' 
+                      : 'hover:bg-valorant-input'
+                  }`}
+                >
+                  Productos
+                </a>
+                <a
+                  href="?tab=categories"
+                  class={`px-6 py-2 rounded-md transition-colors text-center ${
+                    activeTab === 'categories' 
+                      ? 'bg-valorant-accent text-white' 
+                      : 'hover:bg-valorant-input'
+                  }`}
+                >
+                  Categorías
+                </a>
+              </nav>
+            </div>
+
+            {activeTab === "products" ? (
+              <ManageProduct client:only="react" token={tokenValue} />
+            ) : (
+              <AddCategory client:only="react" token={tokenValue} />
+            )}
+          </div>
         </main>
       </div>
-      <Navbar/>
     </div>
   ) : (
-    <div class="text-center py-10  text-valorant-light">
+    <div class="text-center py-10 text-valorant-light">
       <h1 class="text-3xl font-bold text-red-500">Acceso Denegado</h1>
       <p class="text-lg mt-4">No tienes permisos para acceder a esta página.</p>
       <a href="/" class="text-blue-500 underline">Volver a la página principal</a>
@@ -43,67 +74,41 @@ if (tokenValue) {
   )}
 </Layout>
 
-<style>
-  #background {
-    position: fixed;
-    top: 0;
+<style is:global>
+  :root {
+    --valorant-dark: #0f1923;
+    --valorant-card: #1a242d;
+    --valorant-light: #ece8e1;
+    --valorant-accent: #ff4655;
+    --valorant-border: #2a3a4b;
+    --valorant-input: #2a3a4b;
+    --valorant-gray: #768079;
+  }
+
+  .bg-valorant-dark { background-color: var(--valorant-dark); }
+  .bg-valorant-card { background-color: var(--valorant-card); }
+  .text-valorant-light { color: var(--valorant-light); }
+  .bg-valorant-accent { background-color: var(--valorant-accent); }
+  .border-valorant-border { border-color: var(--valorant-border); }
+  .bg-valorant-input { background-color: var(--valorant-input); }
+  
+  /* Mejoras para los tabs */
+  .nav-tabs {
+    border-bottom: 2px solid var(--valorant-border);
+  }
+  
+  .tab-active {
+    position: relative;
+    color: var(--valorant-accent);
+  }
+  
+  .tab-active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
     left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    filter: blur(100px);
-  }
-
-  aside {
-  width: 16.67%; /* Aproximadamente 1/6 del ancho total */
-  max-width: 240px; /* Ancho máximo para pantallas grandes */
-  min-width: 80px; /* Ancho mínimo para pantallas pequeñas */
-  height: 100vh;
-  overflow-y: auto;
-}
-  #container {
-    font-family: Inter, Roboto, "Helvetica Neue", "Arial Nova", "Nimbus Sans",
-      Arial, sans-serif;
-      display: flex;
-  flex-direction: row;
-  height: 100%;  }
-
-  main {
-    flex: 1; /* Deja que el contenido principal ocupe el espacio restante */
-    height: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  #hero {
-    display: flex;
-    align-items: start;
-    flex-direction: column;
-    justify-content: center;
-    padding: 16px;
-  }
-
-  body.bg-valorant-dark {
-    background-color: #0f172a; /* Color de fondo para modo oscuro */
-  }
-
-  .text-valorant-light {
-    color: #e2e8f0; /* Color de texto claro */
-  }
-
-  .bg-valorant-dark {
-    background-color: #1e293b; /* Fondo oscuro */
-  }
-
-  .bg-valorant-darker {
-    background-color: #0f172a; /* Fondo más oscuro */
-  }
-
-  .text-valorant {
-    color: #f43f5e; /* Color de texto para Valorant */
-  }
-
-  .border-valorant-dark {
-    border-color: #334155; /* Borde oscuro */
+    right: 0;
+    height: 2px;
+    background-color: var(--valorant-accent);
   }
 </style>

@@ -1,42 +1,18 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "../Pagination.jsx";
-import { formatPriceToCLP } from "../../utils/formattedPriceToClp";
-import PayButton from "../../components/webpay/PayButton";
+import CategoryList from "./CategoryList.jsx";
+import Filters from "./Filters.jsx";
+import ProductGrid from "./ProductGrid.jsx";
 
 const ListStore = ({ token, initialProducts, initialCategories }) => {
-  // Utilizar las propiedades iniciales para evitar la espera en el cliente
   const [products, setProducts] = useState(initialProducts || []);
   const [categories, setCategories] = useState(initialCategories || []);
-  const [error, setError] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filters, setFilters] = useState({ name: "", brand: "" });
   const [currentPage, setCurrentPage] = useState(1);
-  const [filters, setFilters] = useState({
-    name: "",
-    brand: "",
-  });
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const itemsPerPage = 6;
-
-  // Si fuera necesario, puedes actualizar los datos en el cliente
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // Aquí podrías refrescar los datos si se requiere
-        // const productsResponse = await fetch("https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/products");
-        // const productsData = await productsResponse.json();
-        // setProducts(productsData);
-      } catch (err) {
-        console.error(err);
-        setError(err.message || "Error al cargar datos");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // Si ya tienes los datos precargados, puedes omitir esta llamada
-    // fetchData();
-  }, []);
 
   useEffect(() => {
     const filterProducts = () => {
@@ -46,17 +22,14 @@ const ListStore = ({ token, initialProducts, initialCategories }) => {
           product.brand.toLowerCase().includes(filters.brand.toLowerCase())
       );
       setFilteredProducts(filtered);
-      setCurrentPage(1); // Reinicia la paginación al cambiar el filtro
+      setCurrentPage(1);
     };
 
     filterProducts();
   }, [products, filters]);
 
   const handleFilterChange = (e) => {
-    setFilters({
-      ...filters,
-      [e.target.name]: e.target.value,
-    });
+    setFilters({ ...filters, [e.target.name]: e.target.value });
   };
 
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -65,111 +38,41 @@ const ListStore = ({ token, initialProducts, initialCategories }) => {
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   return (
-    <div className="space-y-8">
-      {error && <p className="text-red-500">{error}</p>}
-      {loading && <p className="text-white">Cargando datos...</p>}
+    <div className="bg-gray-800/30 min-h-screen">
+      <main className="container mx-auto px-4 py-8">
+        {error && <p className="text-red-500">{error}</p>}
+        {loading && <p className="text-white">Cargando datos...</p>}
 
-      {/* Sección de Categorías */}
-      <section aria-labelledby="categories-heading">
-        <h2 id="categories-heading" className="text-3xl font-bold text-valorant mb-4">
-          Categorías
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {categories.map((category) => (
-            <a
-              key={category._id}
-              href={`/node/category/${category._id}`}
-              className="bg-gray-800 text-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-200"
-              aria-label={`Categoría ${category.name}`}
-            >
-              <h3 className="text-xl font-semibold">{category.name}</h3>
-              <p className="text-sm text-gray-400">{category.description}</p>
-            </a>
-          ))}
-        </div>
-      </section>
+        {/* Layout de la Tienda */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Sidebar Izquierda (Categorías) */}
+          <aside className="md:col-span-1 bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-bold text-white mb-4">Categorías</h2>
+            <CategoryList categories={categories} />
+          </aside>
 
-      {/* Sección de Filtros */}
-      <section aria-labelledby="filters-heading">
-        <h3 id="filters-heading" className="text-2xl font-bold text-white mb-4">
-          Filtros
-        </h3>
-        <div className="bg-gray-900 p-4 rounded-lg shadow-md">
-          <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-300">
-                Buscar por nombre
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Nombre del producto"
-                value={filters.name}
-                onChange={handleFilterChange}
-                className="mt-1 p-2 w-full rounded-lg bg-gray-800 text-white border border-gray-700"
-              />
+          {/* Contenido Principal (Filtros + Productos) */}
+          <section className="md:col-span-3">
+            {/* Filtros */}
+            <div className="mb-8">
+              <Filters filters={filters} onFilterChange={handleFilterChange} />
             </div>
-            <div>
-              <label htmlFor="brand" className="block text-sm font-medium text-gray-300">
-                Buscar por marca
-              </label>
-              <input
-                type="text"
-                id="brand"
-                name="brand"
-                placeholder="Marca"
-                value={filters.brand}
-                onChange={handleFilterChange}
-                className="mt-1 p-2 w-full rounded-lg bg-gray-800 text-white border border-gray-700"
-              />
-            </div>
-          </form>
-        </div>
-      </section>
 
-      {/* Sección de Productos */}
-      <section aria-labelledby="products-heading">
-        <h2 id="products-heading" className="text-3xl font-bold text-valorant mb-4">
-          Productos
-        </h2>
-        {filteredProducts.length === 0 && !loading ? (
-          <p className="text-white">No se encontraron productos.</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentItems.map((product) => (
-              <div
-                key={product._id}
-                className="bg-gray-800 text-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-200"
-              >
-                <a href={`/node/product/${product._id}`} aria-label={`Ver detalles de ${product.name}`}>
-                  <img
-                    src={product.image || "https://via.placeholder.com/150"}
-                    alt={product.name}
-                    className="w-full h-52 object-cover rounded-lg mb-4"
-                  />
-                </a>
-                <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-                <p className="text-gray-400 text-sm mb-4">{product.description}</p>
-                <p className="text-lg font-bold mb-2">{formatPriceToCLP(product.price)}</p>
-                <div className="flex flex-col space-y-2">
-                  <PayButton amount={product.price} productId={product._id} client:load />
-                  <button className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-200">
-                    Añadir al Carrito
-                  </button>
-                </div>
-              </div>
-            ))}
+            {/* Productos */}
+            <h2 className="text-3xl font-bold text-valorant mb-4">Productos</h2>
+            <ProductGrid products={currentItems} />
+          </section>
+        </div>
+
+        {/* Paginación */}
+        {totalPages > 1 && (
+          <div className="fixed bottom-0 left-0 right-0 bg-gray-800 py-4 shadow-lg">
+            <div className="container mx-auto px-4">
+              <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
+            </div>
           </div>
         )}
-      </section>
-
-      {/* Paginación */}
-      {totalPages > 1 && (
-        <div className="mb-24">
-          <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={setCurrentPage} />
-        </div>
-      )}
+      </main>
     </div>
   );
 };

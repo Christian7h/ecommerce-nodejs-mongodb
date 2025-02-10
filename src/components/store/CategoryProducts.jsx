@@ -4,38 +4,24 @@ import { formatPriceToCLP } from "../../utils/formattedPriceToClp";
 const CategoryProducts = ({ categoryId }) => {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(true); // Estado para el loader
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchCategoryProducts = async () => {
-      console.log("ID de la categoría recibida:", categoryId); // Verificar el ID recibido
-
-      setIsLoading(true); // Mostrar el loader al iniciar la carga
-
+      setIsLoading(true);
       try {
-        // Hacer la solicitud a la API
         const response = await fetch(
-          `https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/products`
+          `https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/products/?categories=${categoryId}`
         );
+
+        if (!response.ok) throw new Error("Error al cargar los productos");
+
         const data = await response.json();
-
-        console.log("Productos recibidos de la API:", data); // Inspeccionar los datos recibidos
-
-        if (!response.ok) {
-          throw new Error(data.message || "Error al cargar los productos");
-        }
-
-        // Filtrar los productos que pertenecen a la categoría seleccionada
-        const filteredProducts = data.filter(
-          (product) => product.category && product.category._id === categoryId
-        );
-
-        setProducts(filteredProducts);
+        setProducts(data);
       } catch (err) {
-        console.error(err);
         setError(err.message || "Error al cargar los productos");
       } finally {
-        setIsLoading(false); // Ocultar el loader al finalizar
+        setIsLoading(false);
       }
     };
 
@@ -44,17 +30,17 @@ const CategoryProducts = ({ categoryId }) => {
 
   return (
     <div className="space-y-8">
-      {/* Botón "Volver" */}
+      {/* Botón "Volver" con mejor diseño */}
       <a
         href="/node/store"
-        className="bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200 mb-4 inline-block"
+        className="flex items-center gap-2 text-white hover:text-gray-300 transition duration-200 mb-4"
       >
-        Volver a Categorías
+        <span className="text-xl">←</span> Volver a Categorías
       </a>
 
-      {/* Loader */}
+      {/* Loader y errores */}
       {isLoading ? (
-        <p className="text-white">Cargando productos...</p>
+        <p className="text-white text-lg">Cargando productos...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : products.length > 0 ? (
@@ -62,7 +48,7 @@ const CategoryProducts = ({ categoryId }) => {
           {products.map((product) => (
             <div
               key={product._id}
-              className="bg-gray-800 text-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-200"
+              className="bg-gray-800 text-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-200 flex flex-col"
             >
               <img
                 src={product.image || "https://via.placeholder.com/150"}
@@ -70,7 +56,7 @@ const CategoryProducts = ({ categoryId }) => {
                 className="w-full h-40 object-cover rounded-lg mb-4"
               />
               <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
-              <p className="text-gray-400 text-sm mb-4">{product.description}</p>
+              <p className="text-gray-400 text-sm flex-1">{product.description}</p>
               <p className="text-lg font-bold mb-2">{formatPriceToCLP(product.price)}</p>
               <button className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-200">
                 Añadir al Carrito

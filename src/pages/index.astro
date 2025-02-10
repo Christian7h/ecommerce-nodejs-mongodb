@@ -15,40 +15,42 @@ const countryCode = country?.code || "";
 ---
 
 <Layout>
-  <main class="container mx-auto p-8">
-    <header class="mb-12">
-      <h1 class="text-4xl font-bold text-valorant mb-4">
-        ¡Bienvenido {user ? user.username : "visitante"} de {cityName}, {countryName}!
-      </h1>
-      {countryCode && (
+  <header class="mb-12">
+    <h1 class="text-4xl font-bold text-valorant mb-4">
+      ¡Bienvenido {user ? user.username : "visitante"} de {cityName}, {
+        countryName
+      }!
+    </h1>
+    {
+      countryCode && (
         <img
           src={`https://flagcdn.com/56x42/${countryCode.toLowerCase()}.png`}
           alt={`Bandera de ${countryName}`}
           style="height:2em;"
           class="inline-block ml-2"
         />
-      )}
-    </header>
+      )
+    }
+  </header>
 
-    <section class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-      <!-- Enlace a la API Node -->
-      <CardApis
-        href="/node"
-        imageSrc={bannerNode}
-        imageAlt="Api Node"
-        title="API MongoDB, Express, Astro, NodeJS"
-        description="Explora el contenido de la API conectada a MEAN CRUD"
-      />
+  <section class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Enlace a la API Node -->
+    <CardApis
+      href="/node"
+      imageSrc={bannerNode}
+      imageAlt="Api Node"
+      title="API MongoDB, Express, Astro, NodeJS"
+      description="Explora el contenido de la API conectada a MEAN CRUD"
+    />
 
-      <!-- Agrega más componentes CardApis según sea necesario -->
-    </section>
-  </main>
+    <!-- Agrega más componentes CardApis según sea necesario -->
+  </section>
 </Layout>
 
 <style>
   /* Ejemplo de variables de color y estilos consistentes */
   .text-valorant {
-    color: #10B981; /* Verde, ajustable según tu guía de estilos */
+    color: #10b981; /* Verde, ajustable según tu guía de estilos */
   }
 
   /* Puedes incluir más estilos globales o específicos aquí */

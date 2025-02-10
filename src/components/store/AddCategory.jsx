@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
+import { FiEdit, FiTrash2, FiPlus, FiX, FiTag } from "react-icons/fi";
 
 function AddCategory({ token }) {
-  const [formData, setFormData] = useState({ name: "", icon: "", color: "" });
+  const [formData, setFormData] = useState({ name: "", icon: "", color: "#FF4655" });
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [notification, setNotification] = useState("");
+  const [deleteModal, setDeleteModal] = useState(null);
   const API_URL = "https://nodejs-eshop-api-course-2c70.onrender.com/api/v1/categories";
 
   useEffect(() => {
@@ -75,68 +78,176 @@ function AddCategory({ token }) {
   }
 
   return (
-    <div className="bg-valorant-dark grid grid-cols-1 md:grid-cols-2 gap-2 p-8 justify-center">
-      <div className="max-w-4xl bg-gray-800 rounded-lg shadow-md p-6 space-y-6">
-        <h2 className="text-3xl font-bold text-valorant mb-6">{selectedCategory ? "Editar Categoría" : "Añadir Categoría"}</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-xl text-white">Nombre</label>
-            <input
-              type="text"
-              name="name"
-              placeholder="Electrónica"
-              value={formData.name}
-              onChange={handleChange}
-              className="p-2 w-full bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="icon" className="block text-xl text-white">Icono</label>
-            <input
+    <div className="bg-valorant-dark  max-h-screen grid grid-cols-1 p-3 lg:grid-cols-2 gap-6">
+    {/* Formulario de Categorías */}
+    <div className="bg-valorant-card rounded-xl shadow-lg p-6 h-fit sticky top-6">
+      <h2 className="text-2xl font-bold text-valorant-light mb-6 flex items-center gap-2">
+        <FiTag size={24} />
+        {selectedCategory ? "Editar Categoría" : "Nueva Categoría"}
+      </h2>
+
+      {notification && (
+        <div className="mb-4 p-4 rounded-lg bg-green-900/50 text-green-400">
+          {notification}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-2">
+          <label className="text-valorant-light text-sm font-medium">Nombre</label>
+          <input
+            type="text"
+            name="name"
+            placeholder="Ej: Electrónica"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full px-4 py-2 bg-valorant-input rounded-lg text-valorant-light focus:ring-2 focus:ring-valorant-accent"
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-valorant-light text-sm font-medium">Icono (Clase)</label>
+          <input
             type="text"
             name="icon"
-            placeholder="Icon"
+            placeholder="Ej: FiSmartphone"
             value={formData.icon}
             onChange={handleChange}
-              className="p-2 w-full bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600"
-            />
-          </div>
-          <div>
-            <label htmlFor="color" className="block text-xl text-white">Color</label>
+            className="w-full px-4 py-2 bg-valorant-input rounded-lg text-valorant-light focus:ring-2 focus:ring-valorant-accent"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-valorant-light text-sm font-medium">Color</label>
+          <div className="relative">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2">
+            </div>
             <input
               type="color"
               name="color"
               value={formData.color}
-              placeholder="Color"
               onChange={handleChange}
-              className="w-full h-10 bg-gray-900 border border-gray-700 text-white rounded-lg focus:ring-2 focus:ring-red-600"
+              className="w-full h-8 bg-valorant-input rounded-lg cursor-pointer"
             />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700 transition duration-200"
-          >
-            {selectedCategory ? "Actualizar" : "Añadir"}
-          </button>
-        </form>
         </div>
-        <div className="max-w-xl bg-gray-800 rounded-lg shadow-md p-6 space-y-6 flex flex-col justify-center">
-        <h2 className="text-2xl font-bold text-valorant mb-4">Categorías Existentes</h2>
-        <ul className="space-y-2">
-          {categories.map((category) => (
-            <li key={category.id} className="bg-gray-700 p-2 rounded-lg flex justify-between items-center">
-              <span className="text-white">{category.name} - {category.icon} - <span style={{ color: category.color }}>{category.color}</span></span>
-              <div className="space-x-2">
-                <button onClick={() => handleEdit(category)} className="bg-blue-500 text-white py-1 px-2 rounded-lg hover:bg-blue-700 transition duration-200">Editar</button>
-                <button onClick={() => handleDelete(category.id)} className="bg-red-500 text-white py-1 px-2 rounded-lg hover:bg-red-700 transition duration-200">Eliminar</button>
-              </div>
-            </li>
-          ))}
-        </ul>
+
+        <button
+          type="submit"
+          className="w-full py-3 px-6 bg-valorant-accent text-valorant-light rounded-lg font-medium hover:bg-valorant-accent/90 transition-colors flex items-center justify-center gap-2"
+        >
+          <FiPlus size={20} />
+          {selectedCategory ? "Actualizar Categoría" : "Crear Categoría"}
+        </button>
+      </form>
+    </div>
+
+    {/* Listado de Categorías */}
+    <div className="bg-valorant-card rounded-xl shadow-lg p-6">
+      <h3 className="text-xl font-bold text-valorant-light mb-6 flex items-center gap-2">
+        <FiTag size={20} />
+        Categorías Existentes ({categories.length})
+      </h3>
+
+      <div className="overflow-x-auto rounded-lg border border-valorant-border">
+        <table className="w-full">
+          <thead className="bg-valorant-dark">
+            <tr>
+              <th className="px-6 py-4 text-left text-valorant-light">Nombre</th>
+              <th className="px-6 py-4 text-left text-valorant-light">Color</th>
+              <th className="px-6 py-4 text-left text-valorant-light">Acciones</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-valorant-border">
+            {categories.map((category) => (
+              <tr key={category.id} className="hover:bg-valorant-dark/50">
+                <td className="px-6 py-4 text-valorant-light font-medium">
+                  <div className="flex items-center gap-3">
+                    {category.icon && (
+                      <div 
+                        className="p-2 rounded-lg"
+                        style={{ backgroundColor: category.color + '20' }}
+                      >
+                        <FiTag 
+                          size={20} 
+                          style={{ color: category.color }} 
+                        />
+                      </div>
+                    )}
+                    {category.name}
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <div 
+                      className="w-6 h-6 rounded-lg border border-valorant-border"
+                      style={{ backgroundColor: category.color }}
+                    />
+                    <span className="text-valorant-light">
+                      {category.color}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => handleEdit(category)}
+                      className="p-2 hover:bg-valorant-accent/20 rounded-lg text-valorant-light hover:text-valorant-accent transition-colors"
+                    >
+                      <FiEdit size={20} />
+                    </button>
+                    <button
+                      onClick={() => setDeleteModal(category.id)}
+                      className="p-2 hover:bg-red-900/20 rounded-lg text-valorant-light hover:text-red-500 transition-colors"
+                    >
+                      <FiTrash2 size={20} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
-  );
+
+    {/* Modal de Confirmación */}
+    {deleteModal && (
+      <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div className="bg-valorant-card rounded-xl p-6 max-w-md w-full">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-bold text-valorant-light">Confirmar Eliminación</h3>
+            <button 
+              onClick={() => setDeleteModal(null)}
+              className="text-valorant-gray hover:text-valorant-light"
+            >
+              <FiX size={24} />
+            </button>
+          </div>
+          <p className="text-valorant-light mb-6">¿Estás seguro de eliminar esta categoría? Todos los productos asociados serán afectados.</p>
+          <div className="flex gap-4 justify-end">
+            <button
+              onClick={() => setDeleteModal(null)}
+              className="px-6 py-2 text-valorant-light hover:bg-valorant-border rounded-lg transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={() => {
+                handleDelete(deleteModal);
+                setDeleteModal(null);
+              }}
+              className="px-6 py-2 bg-red-600 text-valorant-light rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+  </div>
+);
 }
 
 export default AddCategory;
